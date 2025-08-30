@@ -77,10 +77,11 @@ public class PyMovement : MonoBehaviour
     public float smoothTime = 0.3f;
 
     private Quaternion smoothDampVel; // stores angular velocity for smooth damp
-
+    float offset = 4f;
     private void SlopeAlign(Vector3 moveDir)
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 6f))
+        Vector3 origin = transform.position + transform.forward *offset;
+        if (Physics.Raycast(origin, Vector3.down, out hit, 6f))
         {
             Vector3 groundNormal = hit.normal;
             Vector3 forward = moveDir.magnitude > 0.1f ? moveDir : transform.forward;

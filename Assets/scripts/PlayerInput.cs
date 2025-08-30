@@ -10,8 +10,9 @@ public class PlayerInput : MonoBehaviour
     private bool isGrounded;
     private bool inWater;
     private bool swimUp;
+    private bool getdown;
     [SerializeField] private float JumpForce = 20f;
-    Vector3 gravity = new(0f, -1f, 0f);
+    [SerializeField] private Vector3 gravity = new(0f, -0.2f, 0f);
 
     public Rig rig;
     public static PlayerInput Instance { get; private set; }
@@ -33,20 +34,35 @@ public class PlayerInput : MonoBehaviour
         inputActions.Player.Sprint.canceled += Sprint_canceled;
         inputActions.Player.Jump.performed += Jump_performed;
         inputActions.Player.Jump.canceled += Jump_canceled;
+        inputActions.Player.Crouch.performed += Crouch_performed;
+        inputActions.Player.Crouch.canceled += Crouch_canceled;
+    }
 
+    private void Crouch_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        getdown = false;
+    }
+
+    private void Crouch_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+       
+            getdown = true;
+       
     }
 
     private void Jump_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        // rig.weight = 0.0000f;
-        if (inWater)
-            swimUp = false;
+      //  rig.weight = 0.0000f;
+       
+        swimUp = false;
+       
+       
 
     }
 
     float targetWeight;
     float changeSpeed;
-   [SerializeField] float upForce = 5f;
+   [SerializeField] float upForce = 1f;
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         
@@ -65,9 +81,10 @@ public class PlayerInput : MonoBehaviour
         else if (inWater)
         {
             swimUp = true;
-            changeSpeed = 5f;
-             targetWeight = .7f;
-          
+            changeSpeed = 10f;
+             targetWeight = .2f;
+           
+
 
         }
         
@@ -81,7 +98,18 @@ public class PlayerInput : MonoBehaviour
         if (collision.gameObject.CompareTag("ground"))
         {
             isGrounded = true;
-            rig.weight = 0.0000f;
+            // rig.weight = 0.0000f;
+            changeSpeed = 10f;
+            rig.weight = Mathf.Lerp(rig.weight, 0.0000f, Time.deltaTime * changeSpeed);
+
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("ground"))
+        {
+            //isGrounded = false;
            
 
         }
@@ -93,15 +121,24 @@ public class PlayerInput : MonoBehaviour
         {
             inWater = true;
             Debug.Log("thaneer thaneer");
-            Physics.gravity = Vector3.zero;
-            rb.AddForce(gravity, ForceMode.Acceleration);
+            
+           // rb.AddForce(gravity, ForceMode.Acceleration);
+            Physics.gravity = gravity;
         }
         
     }
     private void OnTriggerExit(Collider other)
     {
-        inWater = false;
-        Physics.gravity = new Vector3(0f, -10f, 0f);
+
+        if (other.gameObject.CompareTag("water"))
+        {
+            inWater = false;
+            if(!isGrounded)
+            rb.AddForce(Vector3.down*3f, ForceMode.Impulse);
+            Physics.gravity =new Vector3(0f,-10f,0f);
+
+        }
+       
     }
     private void Sprint_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
@@ -130,8 +167,16 @@ public class PlayerInput : MonoBehaviour
 
         if (inWater && swimUp)
         {
-            rb.AddForce(Vector3.up * upForce, ForceMode.Acceleration);
-            rig.weight = Mathf.Lerp(rig.weight, targetWeight, Time.deltaTime * changeSpeed);
+           
+            rig.weight = Mathf.Lerp(rig.weight, targetWeight, Time.deltaTime*changeSpeed );
+            rb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
+        }
+        if(!swimUp)
+             rig.weight = Mathf.Lerp(rig.weight, 0.0000f, Time.deltaTime*changeSpeed);
+
+        if(getdown)
+        {
+            rb.AddForce(Vector3.down *10f, ForceMode.Impulse);
         }
     }
 
