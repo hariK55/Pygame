@@ -7,8 +7,8 @@ public class PlayerInput : MonoBehaviour
     private InputSystem_Actions inputActions;
   
     private Rigidbody rb;
-    private bool isGrounded;
-    private bool inWater;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool inWater;
     private bool swimUp;
     private bool getdown;
     [SerializeField] private float JumpForce = 20f;
@@ -67,7 +67,7 @@ public class PlayerInput : MonoBehaviour
     {
         
         Vector2 movement= GetMovementVector();
-        if (isGrounded && movement != Vector2.zero && !inWater)
+       /* if (isGrounded && movement != Vector2.zero && !inWater)
         {
             changeSpeed = 10f;
             targetWeight = 1f;
@@ -78,7 +78,8 @@ public class PlayerInput : MonoBehaviour
             isGrounded = false;
 
         }
-        else if (inWater)
+       */
+         if (inWater)
         {
             swimUp = true;
             changeSpeed = 10f;

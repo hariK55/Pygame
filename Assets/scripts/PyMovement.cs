@@ -77,7 +77,7 @@ public class PyMovement : MonoBehaviour
     public float smoothTime = 0.3f;
 
     private Quaternion smoothDampVel; // stores angular velocity for smooth damp
-    float offset = 4f;
+    float offset = 4.5f;
     private void SlopeAlign(Vector3 moveDir)
     {
         Vector3 origin = transform.position + transform.forward *offset;
