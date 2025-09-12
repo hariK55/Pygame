@@ -11,7 +11,7 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private bool inWater;
     private bool swimUp;
     private bool getdown;
-    [SerializeField] private float JumpForce = 20f;
+   // [SerializeField] private float JumpForce = 20f;
     [SerializeField] private Vector3 gravity = new(0f, -0.2f, 0f);
 
     public Rig rig;
@@ -121,7 +121,7 @@ public class PlayerInput : MonoBehaviour
         if (other.gameObject.CompareTag("water"))
         {
             inWater = true;
-            Debug.Log("thaneer thaneer");
+            //Debug.Log("thaneer thaneer");
             
            // rb.AddForce(gravity, ForceMode.Acceleration);
             Physics.gravity = gravity;
